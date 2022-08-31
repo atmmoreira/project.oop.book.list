@@ -55,6 +55,56 @@ class UserInterface {
   }
 }
 
+// Localstorage Class
+class Store {
+  // A palavra chave static define um método estático para a classe.
+  // Métodos estáticos não são chamados na instâncias da classe.
+  // Em vez disso, eles são chamados na própria classe.
+  // Geralmente, são funções utilitárias, como funções para criar ou clonar objetos.
+  static getBooks() {
+    let books;
+
+    if (localStorage.getItem('books') === null) {
+      books = [];
+    } else {
+      books = JSON.parse(localStorage.getItem('books'));
+    }
+
+    return books;
+  }
+
+  static displayBooks() {
+    const books = Store.getBooks();
+
+    books.forEach(function (book) {
+      const userInterface = new UserInterface();
+      userInterface.addBooktoList(book);
+    });
+  }
+
+  static addBook(book) {
+    const books = Store.getBooks();
+
+    books.push(book);
+    localStorage.setItem('books', JSON.stringify(books));
+  }
+
+  static removeBook(isbn) {
+    const books = Store.getBooks();
+
+    books.forEach((book, index) => {
+      if (book.isbn === isbn) {
+        books.splice(index, 1);
+      }
+    });
+
+    localStorage.setItem('books', JSON.stringify(books));
+  }
+}
+
+// DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks);
+
 // Event listener to Add Book
 document.getElementById('book-form').addEventListener('submit', function (e) {
   // Get form values
@@ -74,6 +124,8 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
   } else {
     // Add book to list
     userInterface.addBooktoList(book);
+    // Add to Localstorage
+    Store.addBook(book);
     // Show success
     userInterface.showAlert('Book saved!', 'success');
     // Clear fileds
@@ -89,6 +141,10 @@ document.getElementById('bookList').addEventListener('click', function (e) {
   const userInterface = new UserInterface();
   // Delete book
   userInterface.deleteBook(e.target);
+  // Remove form LocalStorage
+  Store.removeBook(
+    e.target.parentElement.previousElementSibling.children[1].textContent
+  );
   // Deete Success
   userInterface.showAlert('Book removed!', 'success');
 
