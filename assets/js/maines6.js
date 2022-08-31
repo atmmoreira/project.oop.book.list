@@ -11,7 +11,7 @@ class UserInterface {
     const list = document.getElementById('bookList');
 
     // Create list
-    list.innerHTML = `
+    list.innerHTML += `
     <li class="list-group-item d-flex justify-content-between align-items-start">
       <div class="ms-2 me-auto">
         <div class="fw-bold">${book.title} - ${book.author}</div>
